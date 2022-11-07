@@ -4,8 +4,12 @@ import 'package:swifty/intra-api.dart';
 import 'package:swifty/login-view.dart';
 import 'package:swifty/search-view.dart';
 import 'package:swifty/user-view.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
+  IntraApi.instance.initValues(
+      dotenv.env['CLIENT_ID']!, dotenv.env['CLIENT_SECRET']!, dotenv.env['URL']!);
   runApp(const MyApp());
 }
 
@@ -25,8 +29,8 @@ class MyApp extends StatelessWidget {
         ),
         onGenerateRoute: (RouteSettings routes) {
           switch( routes.name ) {
-            case '/' : return CupertinoPageRoute(builder: (_) => LoginView(intraApi: intraApi), settings: routes);
-            case '/user' : return CupertinoPageRoute(builder: (_) => UserView(intraApi: intraApi, login: routes.arguments as String), settings: routes);
+            case '/' : return CupertinoPageRoute(builder: (_) => LoginView(), settings: routes);
+            case '/user' : return CupertinoPageRoute(builder: (_) => UserView(login: routes.arguments as String), settings: routes);
             default : return CupertinoPageRoute(builder: (_) => const SearchView(), settings: routes);
           }
         }

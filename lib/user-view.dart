@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:loader/loader.dart';
 import 'package:swifty/intra-api.dart';
-import 'package:swifty/model.dart';
 
 class UserView extends StatefulWidget {
-  final IntraApi intraApi;
   final String login;
 
-  const UserView({Key? key, required this.intraApi, required this.login}) : super(key: key);
+  const UserView({Key? key, required this.login}) : super(key: key);
 
   @override
   State<UserView> createState() => _UserViewState();
@@ -15,27 +13,25 @@ class UserView extends StatefulWidget {
 
 
 class _UserViewState extends State<UserView> with LoadingMixin<UserView>{
-  late User userFirst;
-  bool loading = false;
   late ImageProvider userPfp;
+  late Map user;
+  bool loading = true;
   int _selectedItem = 0;
-
 
   @override
   Future<void> load() async {
-    final User user = await widget.intraApi.getUser(widget.login);
-    final ImageProvider img = await widget.intraApi.getUserPfp(user);
+    final Map userResponse = await IntraApi.instance.getUser(widget.login);
+    final ImageProvider img = await IntraApi.instance.getUserPfp(user);
     setState(() {
-      userFirst = user;
+      user = userResponse;
       userPfp = img;
     });
   }
 
   Future<void> refreshUser() async {
     setState(() => loading = true);
-    final User user = await widget.intraApi.getUser(widget.login);
+    load();
     setState(() {
-      userFirst = user;
       loading = false;
     });
   }
@@ -43,8 +39,6 @@ class _UserViewState extends State<UserView> with LoadingMixin<UserView>{
   @override
   Widget build(BuildContext context) {
     final String login = widget.login;
-    final User user = userFirst;
-    final ImageProvider pfp = userPfp;
     List<Widget> pages = <Widget>[
       Column(
         children: <Widget>[
@@ -52,14 +46,14 @@ class _UserViewState extends State<UserView> with LoadingMixin<UserView>{
             padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 8),
             child: Center(
               child: Image(
-                image: pfp,
+                image: userPfp,
                 height: 150,
               ),
             )
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 8),
-            child: Text("$login aka ${user.fname} ${user.lname} who you can contact via mail ${user.mail}", style: const TextStyle(
+            child: Text("$login aka ${user['first_name']} ${user['last_name']} who you can contact via mail ${user['email']}", style: const TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.bold
             ),)

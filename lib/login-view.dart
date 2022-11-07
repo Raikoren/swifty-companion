@@ -4,11 +4,8 @@ import 'package:swifty/search-view.dart';
 import 'package:http/http.dart' as http;
 
 class LoginView extends StatefulWidget {
-  final IntraApi intraApi;
-
   const LoginView({
     Key? key,
-    required this.intraApi,
   }) : super(key: key);
 
   @override
@@ -19,7 +16,7 @@ class _LoginViewState extends State<LoginView> {
   String _tokenInfo = 'Waiting...';
 
   void _initOAuth() async {
-    var tokenResp = await widget.intraApi.getToken();
+    var tokenResp = await IntraApi.instance.getToken();
     setState(() {
       _tokenInfo = tokenResp.toString();
     });
