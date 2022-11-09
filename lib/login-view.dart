@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swifty/intra-api.dart';
 import 'package:swifty/search-view.dart';
-import 'package:http/http.dart' as http;
 
 class LoginView extends StatefulWidget {
   const LoginView({
