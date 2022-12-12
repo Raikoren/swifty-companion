@@ -55,4 +55,19 @@ class IntraApi {
 
     return pfp;
   }
+
+  getSkills() async {
+    final res = await http.get(Uri.https(urlBase, "/v2/skills"), headers: {
+      "Authorization": "bearer $tkn",
+    });
+    switch (res.statusCode) {
+      case 200 : return jsonDecode(res.body);
+      case 401 : {
+        getToken();
+        await Future.delayed(const Duration(seconds: 1));
+        return getSkills();
+      }
+      default: throw Exception("Error retrieving Skills");
+    }
+  }
 }

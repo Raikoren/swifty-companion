@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_radar_chart/flutter_radar_chart.dart';
 import 'package:loader/loader.dart';
 import 'package:swifty/intra-api.dart';
 
@@ -43,6 +44,24 @@ class _UserViewState extends State<UserView> with LoadingMixin<UserView>{
   double getLvl(Map last) {
     var res = last['level'] - last['level'].floor();
     return res;
+  }
+
+  List<String> listSkill() {
+    List<String> name = [];
+
+    for (Map skill in user['cursus_users'].last['skills']) {
+      name.add(skill['name']);
+    }
+    return name;
+  }
+
+  List<num> listSkillLevel() {
+    List<num> level = [];
+
+    for (Map skill in user['cursus_users'].last['skills']) {
+      level.add(skill['level']);
+    }
+    return level;
   }
 
   @override
@@ -162,6 +181,13 @@ class _UserViewState extends State<UserView> with LoadingMixin<UserView>{
               }()
             ),
           )
+        ),
+        Center(
+          child: RadarChart.dark(
+            ticks: const [5, 10, 15, 20],
+            features: listSkill(),
+            data: [listSkillLevel()],
+          ),
         )
       ];
       return Scaffold(
@@ -184,6 +210,10 @@ class _UserViewState extends State<UserView> with LoadingMixin<UserView>{
             BottomNavigationBarItem(
               icon: Icon(Icons.bookmark_added_rounded),
               label: 'Projects',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.radar),
+              label: 'Skills'
             )
           ],
           onTap: _onItemTapped,
